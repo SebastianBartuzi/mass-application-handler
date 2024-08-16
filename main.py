@@ -3,11 +3,11 @@ from docx.shared import Pt
 from docx.oxml import OxmlElement
 from docx2pdf import convert
 import re
-import openpyxl
 from datetime import datetime
+from utilities import read_excel
 
 
-def replace_text(input_docx_path, temp_docx_path, output_pdf_path, user_data, town_data):
+def generate_pdf(input_docx_path, temp_docx_path, output_pdf_path, user_data, town_data):
     # Load the DOCX file
     doc = Document(input_docx_path)
 
@@ -72,33 +72,10 @@ def replace_text(input_docx_path, temp_docx_path, output_pdf_path, user_data, to
 
 def generate_docs():
     # Load the Excel workbook
-    workbook = openpyxl.load_workbook('debug/input/data.xlsx')
+    user_data, towns_data = read_excel()
 
-    # Select the active worksheet (you can also specify a worksheet by name)
-    sheet = workbook["Dane"]
-
-    # Initialize an empty list to store the cell values
-    user_data = []
-    user_data.append(sheet['F4'].value)
-    user_data.append(sheet['G4'].value)
-    user_data.append(sheet['H4'].value)
-    user_data.append(sheet['I4'].value)
-    user_data.append(sheet['J4'].value)
-
-    # Start creating files from row 16
-    row = 16
-    while True:
-        town_data = []
-        town_data.append(sheet[f'B{row}'].value)
-        town_data.append(sheet[f'C{row}'].value)
-        town_data.append(sheet[f'D{row}'].value)
-        town_data.append(sheet[f'E{row}'].value)
-        town_data.append(sheet[f'F{row}'].value)
-        town_data.append(sheet[f'G{row}'].value)
-        if town_data[0] is None:  # Stop if the cell is empty
-            break
-        replace_text("debug/input/application.docx", f"debug/bin/{town_data[0]}.docx", f"debug/output/{town_data[0]}.pdf", user_data, town_data)
-        row += 1
+    for town_data in towns_data:
+        generate_pdf("debug/input/application.docx", f"debug/bin/{town_data[0]}.docx", f"debug/output/{town_data[0]}.pdf", user_data, town_data)
 
 
 if __name__ == "__main__":
