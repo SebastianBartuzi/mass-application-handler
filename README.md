@@ -4,3 +4,4 @@
 2. Fill data in debug/input/data.xlsx
 3. Run python main.py
 4. Files are ready in debug/output
+5. To automatically send files, run python send.py
