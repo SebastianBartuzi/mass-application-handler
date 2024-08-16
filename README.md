@@ -6,7 +6,7 @@ You must ensure you have your @mlodalewica.pl e-mail address enabled in Microsof
 
 1. If you don't have Python installed in your system, make sure you download it from here: https://www.python.org/ftp/python/3.12.5/python-3.12.5-amd64.exe
 2. IMPORTANT! During installation make sure you select the option to add Python to PATH environmental variables
-3. Download this programme by going to https://github.com/SebastianBartuzi/mass-application-handler, select Code and Download ZIP. Extract the file and locate in your system.
+3. Download this programme by going to the top of the page, select Code and Download ZIP. Extract the ZIP file.
 4. Run python install.py
 5. Fill local government data in debug/input/data.xlsx
 6. Run python main.py
