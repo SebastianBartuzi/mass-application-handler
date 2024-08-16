@@ -42,7 +42,5 @@ def send_all_emails():
         # Send the email
         mail.Display()
 
-        print("Email sent successfully.")
-
 if __name__ == "__main__":
     send_all_emails()
