@@ -1,4 +1,4 @@
-import openpyxl
+from openpyxl import load_workbook
 
 EXCEL_FILE_PATH = 'debug/input/data.xlsx'
 
