@@ -39,7 +39,7 @@ def generate_pdf(user_data, i, towns_data):
                 new_text = new_text.replace("miastogmina", "Gminy")
             elif town_data[2].upper() == "B":
                 new_text = new_text.replace("tytul", "Burmistrz")
-                new_text = new_text.replace("miastogmina", "Gminy")
+                new_text = new_text.replace("miastogmina", "Miasta i Gminy")
             elif town_data[2].upper() == "P":
                 new_text = new_text.replace("tytul", "Prezydent")
                 new_text = new_text.replace("miastogmina", "Miasta")
