@@ -1,6 +1,22 @@
-from openpyxl import load_workbook
+import openpyxl
 
 EXCEL_FILE_PATH = 'debug/input/data.xlsx'
+
+
+def replace_townname(towns_data, i):
+    workbook = openpyxl.load_workbook(EXCEL_FILE_PATH)
+    sheet = workbook["Dane"]
+    town_name = towns_data[i][0]
+
+    if towns_data[i][2].upper() == "W" or towns_data[i][2].upper() == "B":
+        town_name = "Gmina " + town_name
+    elif towns_data[i][2].upper() == "P":
+        town_name = "Miasto " + town_name
+    sheet[f'B{i + 16}'] = town_name
+    workbook.save(EXCEL_FILE_PATH)
+    workbook.close()
+    return town_name
+
 
 def read_excel():
     # Load the Excel workbook
@@ -28,7 +44,6 @@ def read_excel():
         town_data.append(sheet[f'E{row}'].value)
         town_data.append(sheet[f'F{row}'].value)
         town_data.append(sheet[f'G{row}'].value)
-        town_data.append(sheet[f'H{row}'].value)
         if town_data[0] is None:  # Stop if the cell is empty
             break
         towns_data.append(town_data)

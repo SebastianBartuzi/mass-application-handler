@@ -20,12 +20,12 @@ def send_all_emails():
         mail = outlook.CreateItem(0)
 
         # Set email attributes
-        mail.To = town_data[6]
+        mail.To = town_data[5]
         mail.Subject = 'Wniosek o udostępnienie informacji publicznej'
         message = DEFAULT_MESSAGE
-        if town_data[4].upper() == "M":
+        if town_data[3].upper() == "M":
             message = message.replace("{zwrot}", "Szanowny Panie,")
-        elif town_data[4].upper() == "K":
+        elif town_data[3].upper() == "K":
             message = message.replace("{zwrot}", "Szanowna Pani,")
         message = message.replace("{imie}", user_data[0])
         message = message.replace("{nazwisko}", user_data[1])
@@ -36,7 +36,7 @@ def send_all_emails():
         mail.SentOnBehalfOfName = user_data[4]
 
         # Attach a file
-        attachment_path = os.path.abspath(__file__).replace("send.py", f'debug/output/{town_data[0]}.pdf')
+        attachment_path = os.path.abspath(__file__).replace("sendWithAuthorisation.py", f'debug/output/{town_data[0]}.pdf')
         mail.Attachments.Add(attachment_path)
 
         # Send the email
