@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Mass Application Handler"
+version = "0.1.0"
+description = "Service for sending applications to local authorities and analysing responses using GenAI."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Sebastian Bartuzi", email = "sebastian.bartuzi@mlodalewica.pl" },
+]
+
+dependencies = [
+    "openpyxl",
+    "python-dotenv",
+    "pywin32",
+    "python-docx",
+    "docx2pdf",
+]

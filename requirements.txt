@@ -1,4 +1,0 @@
-pdfplumber
-reportlab
-PyPDF2
-openpyxl
