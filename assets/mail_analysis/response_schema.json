@@ -38,7 +38,7 @@
             "minProperties": 0,
             "maxProperties": 2
         },
-        "response_data": {
+        "questions_responses": {
             "type": "OBJECT",
             "properties": {
                 "offers_internships": {
@@ -62,5 +62,5 @@
             }
         }
     },
-    "required": ["teryt", "response_type", "response_data"]
+    "required": ["teryt", "response_type", "questions_responses"]
 }

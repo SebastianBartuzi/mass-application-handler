@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Optional
 
 from src.utils import FileHandler
 
 
-class ResponseModel:
+class ResponseMailModel:
 
     _mail_sender: str = ""
     _mail_title: str = ""
@@ -11,21 +11,29 @@ class ResponseModel:
     _mail_date: str = ""
     _attachments_paths: List[str] = []
     _unacceptable_attachments_names: List[str] = []
+
     _teryt: str = ""
-    _automatic_response: bool = None
-    _mail_not_delivered: bool = None
-    _action_required: bool = None
-    _deadline_extended: str = None
-    _refused_to_answer_fully: bool = None
-    _refused_to_answer_partially: bool = None
-    _part_answered_separately: bool = None
-    _additional_info_response_type: str = None
-    _offers_internships: bool = None
-    _are_internships_paid: bool = None
-    _plans_paid_internships: bool = None
-    _internships_number: float = None
-    _internships_salaries: float = None
-    _additional_info_response_data: str = None
+    _no_teryt_matched: bool = False
+    _multiple_teryts_matched: bool = False
+
+    _automatic_response: Optional[bool] = None
+    _mail_not_delivered: Optional[bool] = None
+    _wrong_addressee: Optional[bool] = None
+    _action_required: Optional[bool] = None
+    _deadline_extended: Optional[str] = None
+    _refused_to_answer_fully: Optional[bool] = None
+    _refused_to_answer_partially: Optional[bool] = None
+    _part_answered_separately: Optional[bool] = None
+    _additional_info_response_type: Optional[str] = None
+
+    _offers_internships: Optional[bool] = None
+    _are_internships_paid: Optional[bool] = None
+    _plans_paid_internships: Optional[bool] = None
+    _paid_internships_number: Optional[float] = None
+    _internships_salaries: Optional[float] = None
+    _additional_info_questions_responses: Optional[str] = None
+
+    _attention_information: Optional[str] = None
 
 
     def __init__(self):
@@ -112,156 +120,200 @@ class ResponseModel:
     def get_teryt(self) -> str:
         return self._teryt
 
-    def set_automatic_response(self, automatic_response: bool) -> None:
+    def set_no_teryt_matched(self, no_teryt_matched: bool) -> None:
 
-        if not isinstance(automatic_response, bool):
+        if not isinstance(no_teryt_matched, bool):
+            raise ValueError(f"Nieprawidłowa wartość no_teryt_matched: {no_teryt_matched} dla wiadomości "
+                             f"{self._mail_title}!")
+
+        self._no_teryt_matched = no_teryt_matched
+
+    def get_no_teryt_matched(self) -> bool:
+        return self._no_teryt_matched
+
+    def set_multiple_teryts_matched(self, multiple_teryts_matched: bool) -> None:
+
+        if not isinstance(multiple_teryts_matched, bool):
+            raise ValueError(f"Nieprawidłowa wartość multiple_teryts_matched: {multiple_teryts_matched} dla wiadomości "
+                             f"{self._mail_title}!")
+
+        self._multiple_teryts_matched = multiple_teryts_matched
+
+    def get_multiple_teryts_matched(self) -> bool:
+        return self._multiple_teryts_matched
+
+    def set_automatic_response(self, automatic_response: Optional[bool]) -> None:
+
+        if not isinstance(automatic_response, bool) and automatic_response is not None:
             raise ValueError(f"Nieprawidłowa wartość automatic_response: {automatic_response} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._automatic_response = automatic_response
 
-    def get_automatic_response(self) -> bool:
+    def get_automatic_response(self) -> Optional[bool]:
         return self._automatic_response
 
-    def set_mail_not_delivered(self, mail_not_delivered: bool) -> None:
+    def set_mail_not_delivered(self, mail_not_delivered: Optional[bool]) -> None:
 
-        if not isinstance(mail_not_delivered, bool):
+        if not isinstance(mail_not_delivered, bool) and mail_not_delivered is not None:
             raise ValueError(f"Nieprawidłowa wartość mail_not_delivered: {mail_not_delivered} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._mail_not_delivered = mail_not_delivered
 
-    def get_mail_not_delivered(self) -> bool:
+    def get_mail_not_delivered(self) -> Optional[bool]:
         return self._mail_not_delivered
 
-    def set_action_required(self, action_required: bool) -> None:
+    def set_wrong_addressee(self, wrong_addressee: Optional[bool]) -> None:
 
-        if not isinstance(action_required, bool):
+        if not isinstance(wrong_addressee, bool) and wrong_addressee is not None:
+            raise ValueError(f"Nieprawidłowa wartość wrong_addressee: {wrong_addressee} dla wiadomości "
+                             f"{self._mail_title}!")
+
+        self._wrong_addressee = wrong_addressee
+
+    def get_wrong_addressee(self) -> Optional[bool]:
+        return self._wrong_addressee
+
+    def set_action_required(self, action_required: Optional[bool]) -> None:
+
+        if not isinstance(action_required, bool) and action_required is not None:
             raise ValueError(f"Nieprawidłowa wartość action_required: {action_required} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._action_required = action_required
 
-    def get_action_required(self) -> bool:
+    def get_action_required(self) -> Optional[bool]:
         return self._action_required
 
-    def set_deadline_extended(self, deadline_extended: str) -> None:
+    def set_deadline_extended(self, deadline_extended: Optional[str]) -> None:
 
-        if not isinstance(deadline_extended, str):
+        if not isinstance(deadline_extended, str) and deadline_extended is not None:
             raise ValueError(f"Nieprawidłowa wartość deadline_extended: {deadline_extended} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._deadline_extended = deadline_extended
 
-    def get_deadline_extended(self) -> str:
+    def get_deadline_extended(self) -> Optional[str]:
         return self._deadline_extended
 
-    def set_refused_to_answer_fully(self, refused_to_answer_fully: bool) -> None:
+    def set_refused_to_answer_fully(self, refused_to_answer_fully: Optional[bool]) -> None:
 
-        if not isinstance(refused_to_answer_fully, bool):
+        if not isinstance(refused_to_answer_fully, bool) and refused_to_answer_fully is not None:
             raise ValueError(f"Nieprawidłowa wartość refused_to_answer_fully: {refused_to_answer_fully} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._refused_to_answer_fully = refused_to_answer_fully
 
-    def get_refused_to_answer_fully(self) -> bool:
+    def get_refused_to_answer_fully(self) -> Optional[bool]:
         return self._refused_to_answer_fully
 
-    def set_refused_to_answer_partially(self, refused_to_answer_partially: bool) -> None:
+    def set_refused_to_answer_partially(self, refused_to_answer_partially: Optional[bool]) -> None:
 
-        if not isinstance(refused_to_answer_partially, bool):
+        if not isinstance(refused_to_answer_partially, bool) and refused_to_answer_partially is not None:
             raise ValueError(f"Nieprawidłowa wartość refused_to_answer_partially: {refused_to_answer_partially} dla "
                              f"wiadomości {self._mail_title}!")
 
         self._refused_to_answer_partially = refused_to_answer_partially
 
-    def get_refused_to_answer_partially(self) -> bool:
+    def get_refused_to_answer_partially(self) -> Optional[bool]:
         return self._refused_to_answer_partially
 
-    def set_part_answered_separately(self, part_answered_separately: bool) -> None:
+    def set_part_answered_separately(self, part_answered_separately: Optional[bool]) -> None:
 
-        if not isinstance(part_answered_separately, bool):
+        if not isinstance(part_answered_separately, bool) and part_answered_separately is not None:
             raise ValueError(f"Nieprawidłowa wartość part_answered_separately: {part_answered_separately} dla "
                              f"wiadomości {self._mail_title}!")
 
         self._part_answered_separately = part_answered_separately
 
-    def get_part_answered_separately(self) -> bool:
+    def get_part_answered_separately(self) -> Optional[bool]:
         return self._part_answered_separately
 
-    def set_additional_info_response_type(self, additional_info_response_type: str) -> None:
+    def set_additional_info_response_type(self, additional_info_response_type: Optional[str]) -> None:
 
-        if not isinstance(additional_info_response_type, str):
+        if not isinstance(additional_info_response_type, str) and additional_info_response_type is not None:
             raise ValueError(f"Nieprawidłowa wartość additional_info_response_type: {additional_info_response_type} "
                              f"dla wiadomości {self._mail_title}!")
 
         self._additional_info_response_type = additional_info_response_type
 
-    def get_additional_info_response_type(self) -> str:
+    def get_additional_info_response_type(self) -> Optional[str]:
         return self._additional_info_response_type
 
-    def set_offers_internships(self, offers_internships: bool) -> None:
+    def set_offers_internships(self, offers_internships: Optional[bool]) -> None:
 
-        if not isinstance(offers_internships, bool):
+        if not isinstance(offers_internships, bool) and offers_internships is not None:
             raise ValueError(f"Nieprawidłowa wartość offers_internships: {offers_internships} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._offers_internships = offers_internships
 
-    def get_offers_internships(self) -> bool:
+    def get_offers_internships(self) -> Optional[bool]:
         return self._offers_internships
 
-    def set_are_internships_paid(self, are_internships_paid: bool) -> None:
+    def set_are_internships_paid(self, are_internships_paid: Optional[bool]) -> None:
 
-        if not isinstance(are_internships_paid, bool):
+        if not isinstance(are_internships_paid, bool) and are_internships_paid is not None:
             raise ValueError(f"Nieprawidłowa wartość are_internships_paid: {are_internships_paid} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._are_internships_paid = are_internships_paid
 
-    def get_are_internships_paid(self) -> bool:
+    def get_are_internships_paid(self) -> Optional[bool]:
         return self._are_internships_paid
 
-    def set_plans_paid_internships(self, plans_paid_internships: bool) -> None:
+    def set_plans_paid_internships(self, plans_paid_internships: Optional[bool]) -> None:
 
-        if not isinstance(plans_paid_internships, bool):
+        if not isinstance(plans_paid_internships, bool) and plans_paid_internships is not None:
             raise ValueError(f"Nieprawidłowa wartość plans_paid_internships: {plans_paid_internships} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._plans_paid_internships = plans_paid_internships
 
-    def get_plans_paid_internships(self) -> bool:
+    def get_plans_paid_internships(self) -> Optional[bool]:
         return self._plans_paid_internships
 
-    def set_internships_number(self, internships_number: float) -> None:
+    def set_paid_internships_number(self, paid_internships_number: Optional[float]) -> None:
 
-        if not isinstance(internships_number, float):
-            raise ValueError(f"Nieprawidłowa wartość internships_number: {internships_number} dla wiadomości "
+        if not isinstance(paid_internships_number, float) and paid_internships_number is not None:
+            raise ValueError(f"Nieprawidłowa wartość paid_internships_number: {paid_internships_number} dla wiadomości "
                              f"{self._mail_title}!")
 
-        self._internships_number = internships_number
+        self._paid_internships_number = paid_internships_number
 
-    def get_internships_number(self) -> float:
-        return self._internships_number
+    def get_paid_internships_number(self) -> Optional[float]:
+        return self._paid_internships_number
 
-    def set_internships_salaries(self, internships_salaries: float) -> None:
+    def set_internships_salaries(self, internships_salaries: Optional[float]) -> None:
 
-        if not isinstance(internships_salaries, float):
+        if not isinstance(internships_salaries, float) and internships_salaries is not None:
             raise ValueError(f"Nieprawidłowa wartość internships_salaries: {internships_salaries} dla wiadomości "
                              f"{self._mail_title}!")
 
         self._internships_salaries = internships_salaries
 
-    def get_internships_salaries(self) -> float:
+    def get_internships_salaries(self) -> Optional[float]:
         return self._internships_salaries
 
-    def set_additional_info_response_data(self, additional_info_response_data: str) -> None:
+    def set_additional_info_questions_responses(self, additional_info_questions_responses: Optional[str]) -> None:
 
-        if not isinstance(additional_info_response_data, str):
-            raise ValueError(f"Nieprawidłowa wartość additional_info_response_data: {additional_info_response_data} "
-                             f"dla wiadomości {self._mail_title}!")
+        if not isinstance(additional_info_questions_responses, str) and additional_info_questions_responses is not None:
+            raise ValueError(f"Nieprawidłowa wartość additional_info_questions_responses: "
+                             f"{additional_info_questions_responses} dla wiadomości {self._mail_title}!")
 
-        self._additional_info_response_data = additional_info_response_data
+        self._additional_info_questions_responses = additional_info_questions_responses
 
-    def get_additional_info_response_data(self) -> str:
-        return self._additional_info_response_data
+    def get_additional_info_questions_responses(self) -> Optional[str]:
+        return self._additional_info_questions_responses
+
+    def set_attention_information(self, attention_information: Optional[str]) -> None:
+
+        if not isinstance(attention_information, str) and attention_information is not None:
+            raise ValueError(f"Nieprawidłowa wartość attention_information: "
+                             f"{attention_information} dla wiadomości {self._mail_title}!")
+
+        self._attention_information = attention_information
+
+    def get_attention_information(self) -> Optional[str]:
+        return self._attention_information

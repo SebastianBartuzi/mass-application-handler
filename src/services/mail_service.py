@@ -4,7 +4,8 @@ from win32com.client import CDispatch
 
 from src.core import config
 from src.enums import Flag
-from src.models import AuthorityModel, ResponseModel
+from src.enums.attention_information import AttentionInformation
+from src.models import AuthorityModel, ResponseMailModel
 from src.utils import Utils, FileHandler, PathCreator
 
 
@@ -13,8 +14,8 @@ class MailService:
         self._file_handler = FileHandler()
         self._path_creator = PathCreator()
         self._utils = Utils()
-        self._successful_teryts = {}
-        self._unsuccessful_teryts = {}
+        self._successful_send_teryts = {}
+        self._unsuccessful_send_teryts = {}
 
     def _get_authority_mail_title(self, authority_data: AuthorityModel) -> str:
         return f'Wniosek o udostępnienie informacji publicznej ({authority_data.get_authority_teryt()})'
@@ -27,7 +28,7 @@ class MailService:
                 f"odpowiedzi zwrotnej proszę o zawarcie kodu TERYT gminy: {authority_data.get_authority_teryt()}.\n\n"
                 f"Z poważaniem\nSebastian Bartuzi\nCzłonek Stowarzyszenia Młoda Lewica RP")
 
-    def send_authority_email(self, authority_data: AuthorityModel, outlook: CDispatch, test_mode: bool) -> None:
+    def issue_authority_email(self, authority_data: AuthorityModel, outlook: CDispatch, test_mode: bool) -> None:
 
         if test_mode:
             mail_to = config.confirmation_addressees
@@ -49,43 +50,48 @@ class MailService:
 
             mail.Send()
             print(f"E-mail do gminy o TERYT {authority_data.get_authority_teryt()} wysłano pomyślnie.")
-            self._successful_teryts.update({authority_data.get_authority_teryt(): mail_to})
+            self._successful_send_teryts.update({authority_data.get_authority_teryt(): mail_to})
 
             self._file_handler.remove_file(attachment_path)
 
         except Exception as e:
             print(f"Nie udało się wysłać e-mail'a do gminy o TERYT {authority_data.get_authority_teryt()}: {e}")
-            self._unsuccessful_teryts.update({authority_data.get_authority_teryt(): (mail_to, e)})
+            self._unsuccessful_send_teryts.update({authority_data.get_authority_teryt(): (mail_to, e)})
 
-    def _get_confirmation_mail_title(self) -> str:
-        return f"mlAI: Potwierdzenie operacji z dnia {self._utils.get_today_date()}"
+    def _get_send_confirmation_mail_title(self) -> str:
+        return f"mlAI: Potwierdzenie wysłania mail'i z dnia {self._utils.get_today_date()}"
 
-    def _get_confirmation_mail_content(self) -> str:
-        successful_sends_len = len(self._successful_teryts)
-        unsuccessful_sends_len = len(self._unsuccessful_teryts)
+    def _get_send_confirmation_mail_content(self) -> str:
+        successful_sends_len = len(self._successful_send_teryts)
+        unsuccessful_sends_len = len(self._unsuccessful_send_teryts)
 
         successful_sends_summary = "POMYŚLNE WYSŁANIA:\n"
-        for authority_teryt, authority_mail in self._successful_teryts.items():
+        for authority_teryt, authority_mail in self._successful_send_teryts.items():
             successful_sends_summary += f"Dla gminy o TERYT {authority_teryt} na adres(y): {authority_mail}\n"
 
         unsuccessful_sends_summary = "WYSŁANIA ZAKOŃCZONE NIEPOWODZENIEM:\n"
-        for authority_teryt, operation_summary in self._unsuccessful_teryts.items():
+        for authority_teryt, operation_summary in self._unsuccessful_send_teryts.items():
             unsuccessful_sends_summary += (f"Dla gminy o TERYT {authority_teryt} na adres(y): {operation_summary[0]}. "
                                          f"Powód: {operation_summary[1]}\n")
 
-        return (f"Hejo,\nPomyślnie wysłano {successful_sends_len} mail'i z wnioskami. Nie udało się wysłać "
-                f"{unsuccessful_sends_len} mail'i.\nPodsumowanie:\n\n{successful_sends_summary}\n\n"
-                f"{unsuccessful_sends_summary}\n\n\nPozdrawiam serdecznie, miłego dnia i smacznej kawusi,\n"
+        return (f"Hejo,\n"
+                f"Pomyślnie wysłano {successful_sends_len} mail'i z wnioskami.\n"
+                f"Nie udało się wysłać {unsuccessful_sends_len} mail'i.\n"
+                f"Podsumowanie:\n\n"
+                f"{unsuccessful_sends_summary}\n\n"
+                f"{successful_sends_summary}\n\n\n"
+                f"Pozdrawiam serdecznie, miłego dnia i smacznej kawusi,\n"
                 f"mlAI aka Sebastian Bartuzi")
 
-    def send_confirmation(self, outlook: CDispatch):
+    def issue_send_confirmation(self, outlook: CDispatch):
+
         try:
 
             mail = outlook.CreateItem(0)
 
             mail.To = config.confirmation_addressees
-            mail.Subject = self._get_confirmation_mail_title()
-            mail.Body = self._get_confirmation_mail_content()
+            mail.Subject = self._get_send_confirmation_mail_title()
+            mail.Body = self._get_send_confirmation_mail_content()
 
             mail.SentOnBehalfOfName = config.sender_email
 
@@ -95,10 +101,89 @@ class MailService:
         except Exception as e:
             print(f"Nie udało się wysłać e-mail'a potwierdzającego do adresatów {config.confirmation_addressees}: {e}")
 
+    def _get_read_confirmation_mail_title(self) -> str:
+        return f"mlAI: Potwierdzenie zaktualizowania raportu z dnia {self._utils.get_today_date()}"
+
+    def _get_read_confirmation_mail_content(self, mails_data: List[ResponseMailModel]) -> str:
+
+        ignored_mails = 0
+        attention_needed_mails = 0
+        attention_needed_summary = ""
+        response_mails = 0
+        response_summary = ""
+
+        for mail_data in mails_data:
+
+            if mail_data.get_automatic_response():
+                ignored_mails += 1
+
+            if (mail_data.get_mail_not_delivered() or mail_data.get_wrong_addressee() or
+                mail_data.get_action_required() or mail_data.get_deadline_extended() or
+                mail_data.get_refused_to_answer_fully() or mail_data.get_refused_to_answer_partially() or
+                mail_data.get_part_answered_separately() or mail_data.get_no_teryt_matched() or
+                mail_data.get_multiple_teryts_matched()):
+                attention_needed_mails += 1
+                attention_needed_summary += (f"    Tytuł: {mail_data.get_mail_title()}\n"
+                                             f"    Data: {mail_data.get_mail_date()}\n"
+                                             f"    Powód: {mail_data.get_attention_information()}\n"
+                                             f"    Dod. info: {mail_data.get_additional_info_response_type()}\n\n")
+
+            if (mail_data.get_offers_internships() is not None or
+                mail_data.get_are_internships_paid() is not None or
+                mail_data.get_plans_paid_internships() is not None or
+                mail_data.get_paid_internships_number() is not None or
+                mail_data.get_internships_salaries() is not None):
+                response_mails += 1
+                response_summary += (f"    Tytuł: {mail_data.get_mail_title()}\n"
+                                     f"    Data: {mail_data.get_mail_date()}\n\n")
+
+        return (f"Hejo,\n\n"
+                f"Otrzymano {len(mails_data)} wiadomości od {mails_data[0].get_mail_date()}.\n"
+                f"Zignorowano {ignored_mails} wiadomości (automatyczne odpowiedzi).\n\n"
+                f"{attention_needed_mails} wiadomości wymaga Twojej uwagi (wszystkie do Ciebie przekierowałem):\n"
+                f"{attention_needed_summary}"
+                f"{response_mails} zawierają odpowiedzi od gmin:\n"
+                f"{response_summary}\n\n\n"
+                f"Pozdrawiam serdecznie, miłego dnia i smacznej kawusi,\n"
+                f"mlAI aka Sebastian Bartuzi")
+
+    def issue_read_confirmation(self, outlook: CDispatch, mails_data: List[ResponseMailModel]) -> None:
+
+        try:
+
+            mail = outlook.CreateItem(0)
+
+            mail.To = config.confirmation_addressees
+            mail.Subject = self._get_read_confirmation_mail_title()
+            mail.Body = self._get_read_confirmation_mail_content(mails_data)
+
+            mail.Attachments.Add(self._path_creator.get_report_excel_file_path())
+
+            mail.SentOnBehalfOfName = config.sender_email
+
+            mail.Send()
+
+            print(f"E-mail potwierdzający do adresatów {config.confirmation_addressees} wysłano pomyślnie.")
+
+            mail = outlook.CreateItem(0)
+
+            mail.To = config.sender_email
+            mail.Subject = Flag.STOP.value
+            mail.Body = Flag.STOP.value
+
+            mail.SentOnBehalfOfName = config.sender_email
+
+            mail.Send()
+
+            print("E-mail z flagą STOP wysłano pomyślnie.")
+
+        except Exception as e:
+            print(f"Nie udało się wysłać e-mail'a potwierdzającego do adresatów {config.confirmation_addressees}: {e}")
+
     def _is_mail(self, item: CDispatch) -> bool:
         return item.Class == 43
 
-    def read_emails_from_inbox(self, outlook: CDispatch) -> List[ResponseModel]:
+    def read_new_emails_from_inbox(self, outlook: CDispatch) -> List[ResponseMailModel]:
 
         emails_data = []
 
@@ -106,8 +191,10 @@ class MailService:
 
             namespace = outlook.GetNamespace("MAPI")
             folder = namespace.GetDefaultFolder(6)
+            items = list(folder.Items)
+            items.reverse()
 
-            for mail_id, item in enumerate(reversed(folder.Items)):
+            for mail_id, item in enumerate(items):
 
                 if self._is_mail(item):
 
@@ -116,7 +203,7 @@ class MailService:
                     if mail_title == Flag.STOP.value:
                         break
 
-                    mail_data = ResponseModel()
+                    mail_data = ResponseMailModel()
 
                     mail_data.set_mail_title(mail_title)
                     mail_data.set_mail_content(item.Body)
@@ -156,10 +243,13 @@ class MailService:
 
                     print("Pomyślnie przeczytano e-mail!")
 
+                    emails_data.append(mail_data)
+
             print(f"Pomyślnie przeczytano {len(emails_data)} e-maili.")
 
         except Exception as e:
             print(f"Błąd podczas czytania e-maili: {e}")
 
+        emails_data.reverse()
         return emails_data
 

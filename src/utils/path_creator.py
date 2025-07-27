@@ -21,8 +21,14 @@ class PathCreator:
 
         return attachments_dir_path
 
-    def get_excel_file_path(self) -> str:
-        return os.path.abspath(config.excel_file_path)
+    def get_data_excel_file_path(self) -> str:
+        return os.path.abspath(config.data_excel_file_path)
+
+    def get_report_excel_file_path(self) -> str:
+        return os.path.abspath(config.report_excel_file_path)
+
+    def get_report_template_excel_file_path(self) -> str:
+        return os.path.abspath(config.report_template_excel_file_path)
 
     def get_application_template_path(self) -> str:
         return os.path.abspath(config.application_template_path)

@@ -1,9 +1,10 @@
 import json
-from typing import Optional, Union, Dict, List
+from typing import Optional, Union, Dict, List, Any
+
 
 class TypeConverter:
 
-    def str_to_dict_or_list(self, str_to_convert: str) -> Optional[Union[Dict, List]]:
+    def str_to_dict_or_list(self, str_to_convert: str) -> Optional[Union[Dict[str, Any], List[Any]]]:
 
         try:
 

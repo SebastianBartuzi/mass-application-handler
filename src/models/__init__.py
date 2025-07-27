@@ -1,4 +1,4 @@
 from .authority_model import AuthorityModel
-from .response_model import ResponseModel
+from .response_mail_model import ResponseMailModel
 
-__all__ = ["AuthorityModel", "ResponseModel"]
+__all__ = ["AuthorityModel", "ResponseMailModel"]
