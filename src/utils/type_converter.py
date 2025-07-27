@@ -1,18 +1,22 @@
-from typing import List
-
+import json
+from typing import Optional, Union, Dict, List
 
 class TypeConverter:
-    def __init__(self) -> None:
-        pass
 
-    def str_to_list(self, str_to_convert: str) -> List:
-        try:
-            return list(str_to_convert)
-        except Exception as e:
-            raise ValueError(f"Nie udało się przekonwertować string'u {str_to_convert} na listę: {e}")
+    def str_to_dict_or_list(self, str_to_convert: str) -> Optional[Union[Dict, List]]:
 
-    def str_to_int(self, str_to_convert: str) -> int:
         try:
-            return int(str_to_convert)
-        except Exception as e:
-            raise ValueError(f"Nie udało się przekonwertować string'u {str_to_convert} na int: {e}")
+
+            parsed_data = json.loads(str_to_convert)
+
+            if isinstance(parsed_data, (dict, list)):
+                return parsed_data
+
+            else:
+                return None
+
+        except json.JSONDecodeError:
+            return None
+
+        except TypeError:
+            return None

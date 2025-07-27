@@ -3,18 +3,19 @@ from src.utils import PathCreator, Utils
 
 class AuthorityModel:
 
+    _authority_teryt: str = ""
+    _authority_name: str = ""
+    _governor_title: str = ""
+    _governor_gender: str = ""
+    _governor_name: str = ""
+    _authority_office_name: str = ""
+    _authority_office_mail: str = ""
+    _application_docx_path: str = ""
+    _application_pdf_path: str = ""
+
     def __init__(self) -> None:
-        self._path_creator = PathCreator()
         self._utils = Utils()
-        self._authority_teryt = ""
-        self._authority_name = ""
-        self._governor_title = ""
-        self._governor_gender = ""
-        self._governor_name = ""
-        self._authority_office_name = ""
-        self._authority_office_mail = ""
-        self._application_docx_path = ""
-        self._application_pdf_path = ""
+        self._path_creator = PathCreator()
 
     def set_authority_teryt(self, authority_teryt: int) -> None:
         if not isinstance(authority_teryt, int) or not authority_teryt:

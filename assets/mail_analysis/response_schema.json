@@ -1,0 +1,66 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "teryt": {
+            "type": "STRING"
+        },
+        "response_type": {
+            "type": "OBJECT",
+            "properties": {
+                "automatic_response": {
+                    "type": "BOOLEAN"
+                },
+                "mail_not_delivered": {
+                    "type": "BOOLEAN"
+                },
+                "wrong_addressee": {
+                    "type": "BOOLEAN"
+                },
+                "action_required": {
+                    "type": "BOOLEAN"
+                },
+                "deadline_extended": {
+                    "type": "STRING"
+                },
+                "refused_to_answer_fully": {
+                    "type": "BOOLEAN"
+                },
+                "refused_to_answer_partially": {
+                    "type": "BOOLEAN"
+                },
+                "part_answered_separately": {
+                    "type": "BOOLEAN"
+                },
+                "additional_info": {
+                    "type": "STRING"
+                }
+            },
+            "minProperties": 0,
+            "maxProperties": 2
+        },
+        "response_data": {
+            "type": "OBJECT",
+            "properties": {
+                "offers_internships": {
+                    "type": "BOOLEAN"
+                },
+                "are_internships_paid": {
+                    "type": "BOOLEAN"
+                },
+                "plans_paid_internships": {
+                    "type": "BOOLEAN"
+                },
+                "paid_internships_number": {
+                    "type": "NUMBER"
+                },
+                "internships_salaries": {
+                    "type": "NUMBER"
+                },
+                "additional_info": {
+                    "type": "STRING"
+                }
+            }
+        }
+    },
+    "required": ["teryt", "response_type", "response_data"]
+}

@@ -1,0 +1,73 @@
+INSTRUCTIONS:
+
+Your task is to analyse an e-mail. The e-mail is supposed to be an answer for a public information request to a local authority body in Poland.
+You have to analyse the e-mail body and its attachments and generate a JSON with response data.
+
+Below you are explained how to fill each response field.
+
+"teryt": This is a TERYT code of a local authority. It consists of 6 digits (e.g. 020101). However, an authority may send it as a 7-digit number (e.g. 0201011). In such a case reject the last digit.
+The TERYT code should be given in the mail's title, but can appear in any place in the mail or in the attachment.
+In case you don't find it, return this field as an empty string.
+
+"response_type":
+The e-mail may not be an e-mail with answers to the public information request. In such a case, return:
+    "automatic_response": return True if an e-mail is an automatic response from the office saying that the request has been delivered and accepted; don't return otherwise
+    "mail_not_delivered": return True if an e-mail is an automatic response from the mail provider saying that the e-mail was not delivered; don't return otherwise
+    "wrong_addressee": return True if an e-mail was sent with wrong addressee data (e.g. wrong mayor data, wrong local authority, etc.); don't return otherwise
+    "action_required": return True if an action is required (e.g. mail says that this question should be directed to a different department); don't return otherwise
+    "deadline_extended": return the extension date if the office informed about an extension for the answer to the request; don't return otherwise
+    "refused_to_answer_fully": return True if the local authority refused to answer the whole request and gave reasons for that; don't return otherwise
+    "refused_to_answer_partially": return True if the local authority refused to answer one or a few questions of the request and gave reasons for that; don't return otherwise
+    "part_answered_separately": return True if the local authority plans to answer some questions in a separate e-mail; don't return otherwise
+    "additional_info": return all reasons for refusal/extensions/contextual information on unsuccessful mail delivery/actions that must be taken/any additional information useful to deal with the e-mail; always return it in Polish; don't return if nothing to return
+You should only return one key from the above and (optionally) "additional_info".
+If all above would be False and empty strings, just return "response_type" as an empty dict.
+
+"response_data":
+The request consists of 4 questions. These are (as in original):
+    1. Czy Urząd Gminy Osiecznica oferuje praktyki/staże studenckie?
+    2. Jeśli tak – czy są one płatne, czy bezpłatne?
+    3. Jeśli bezpłatne - czy Urząd Gminy Osiecznica planuje stworzyć ofertę płatnych praktyk/staży studenckich?
+    4. Jeśli płatne - ile jest miejsc na praktyki/staże? Ile wynosi kwota wynagrodzenia?
+Following fields should give answers to these questions.
+    "offers_internships": return True if the local authority offers student internships; return False otherwise; don't return at all if answer not given
+    "are_internships_paid": return True if these internships are paid; return False otherwise; don't return at all if answer not given
+    "plans_paid_internships": return True if the authority plans to introduce paid internships; return False otherwise; don't return at all if answer not given
+    "paid_internships_number": return the number of paid internships that the authority offers; don't return at all if answer not given
+    "internships_salaries": return salaries of these internships; return 0 if they are not paid or answer not given or if 'Nie dotyczy'; don't return at all if answer not given
+    "additional_info": return any additional information on internships that is not covered by fields given; always return it in Polish; don't return at all if nothing to add
+
+
+
+RESPONSE FORMAT:
+{
+    "teryt": str,
+    "response_type":
+        {
+            "automatic_response": bool,
+            "mail_not_delivered": bool,
+            "action_required": bool,
+            "deadline_extended": str,
+            "refused_to_answer_fully": bool,
+            "refused_to_answer_partially": bool,
+            "part_answered_separately": bool,
+            "additional_info": str
+        },
+    "response_data":
+        {
+            "offers_internships": bool,
+            "are_internships_paid": bool,
+            "plans_paid_internships": bool,
+            "paid_internships_number": float,
+            "internships_salaries": float,
+            "additional_info": str
+        }
+}
+
+
+MAIL:
+
+FROM: {{mail_from}}
+TITLE: {{mail_title}}
+CONTENT:
+{{mail_content}}

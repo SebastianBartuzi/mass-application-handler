@@ -1,0 +1,24 @@
+INSTRUCTIONS:
+
+Your task is to match a TERYT code of a local authority to an e-mail received from them. Below you are given an e-mail from the authority, as well as attachments.
+You are also given all Polish local authorities data to help you match.
+Ways to match the TERYT code:
+    1) Mayor's name
+    2) Town's name
+    3) Sender's e-mail domain
+In case a few TERYT codes are possible, you should include all TERYT codes in your answer.
+In case TERYT code impossible to establish, return an empty list.
+Ideally aim for a one-element list.
+
+
+MAIL:
+
+FROM: {{mail_from}}
+TITLE: {{mail_title}}
+CONTENT:
+{{mail_content}}
+
+
+LOCAL AUTHORITIES DATA:
+
+{{authorities_data}}
