@@ -4,7 +4,6 @@ from win32com.client import CDispatch
 
 from src.core import config
 from src.enums import Flag
-from src.enums.attention_information import AttentionInformation
 from src.models import AuthorityModel, ResponseMailModel
 from src.utils import Utils, FileHandler, PathCreator
 
@@ -101,6 +100,61 @@ class MailService:
         except Exception as e:
             print(f"Nie udało się wysłać e-mail'a potwierdzającego do adresatów {config.confirmation_addressees}: {e}")
 
+    def _get_forward_attention_mail_title(self, mail_data: ResponseMailModel) -> str:
+        return f"TERYT: {mail_data.get_teryt()}"
+
+    def _get_forward_attention_mail_content(self, mail_data: ResponseMailModel, original_mail: CDispatch,
+                                            forward_mail: CDispatch) -> str:
+
+        headline_content = (f"{mail_data.get_attention_information()}\n"
+                            f"Dodatkowe informacje: {mail_data.get_additional_info_response_type()}\n\n"
+                            f"__________\n\n\n")
+
+        if original_mail.HTMLBody:
+            headline_content_html = f"<p>{headline_content.replace('\n', '<br>')}</p>"
+            forward_mail.HTMLBody = headline_content_html + original_mail.HTMLBody
+
+        return headline_content + original_mail.Body
+
+    def forward_attention_needed_mails(self, outlook: CDispatch, mails_data: List[ResponseMailModel]) -> None:
+
+        try:
+
+            mails_to_forward_data = [mail_data for mail_data in mails_data if mail_data.get_attention_needed()]
+
+            if not mails_to_forward_data:
+                print("Brak e-maili do przekazania.")
+
+            else:
+
+                print(f"Rozpoczynam przekazywanie {len(mails_to_forward_data)} e-maili wymagających uwagi.")
+
+                namespace = outlook.GetNamespace("MAPI")
+
+                for mail_data_to_forward in mails_to_forward_data:
+                    original_mail_item = None
+
+                    if mail_data_to_forward.get_mail_id():
+                        original_mail_item = namespace.GetItemFromID(mail_data_to_forward.get_mail_id())
+
+                    if original_mail_item:
+
+                        forward_mail = original_mail_item.Forward()
+
+                        forward_mail.To = config.confirmation_addressees
+                        forward_mail.Subject = self._get_forward_attention_mail_title(mail_data_to_forward)
+                        forward_mail.Body = self._get_forward_attention_mail_content(
+                            mail_data_to_forward, original_mail_item, forward_mail
+                        )
+
+                        forward_mail.Send()
+
+                        print(f"Pomyślnie przekazano e-mail: '{mail_data_to_forward.get_mail_title()}'")
+
+        except Exception as e:
+            print(f"Błąd podczas przekazywania dalej e-mail'i wymagających uwagi forward_attention_needed_mails: {e}")
+
+
     def _get_read_confirmation_mail_title(self) -> str:
         return f"mlAI: Potwierdzenie zaktualizowania raportu z dnia {self._utils.get_today_date()}"
 
@@ -117,22 +171,14 @@ class MailService:
             if mail_data.get_automatic_response():
                 ignored_mails += 1
 
-            if (mail_data.get_mail_not_delivered() or mail_data.get_wrong_addressee() or
-                mail_data.get_action_required() or mail_data.get_deadline_extended() or
-                mail_data.get_refused_to_answer_fully() or mail_data.get_refused_to_answer_partially() or
-                mail_data.get_part_answered_separately() or mail_data.get_no_teryt_matched() or
-                mail_data.get_multiple_teryts_matched()):
+            if mail_data.get_attention_needed():
                 attention_needed_mails += 1
                 attention_needed_summary += (f"    Tytuł: {mail_data.get_mail_title()}\n"
                                              f"    Data: {mail_data.get_mail_date()}\n"
                                              f"    Powód: {mail_data.get_attention_information()}\n"
                                              f"    Dod. info: {mail_data.get_additional_info_response_type()}\n\n")
 
-            if (mail_data.get_offers_internships() is not None or
-                mail_data.get_are_internships_paid() is not None or
-                mail_data.get_plans_paid_internships() is not None or
-                mail_data.get_paid_internships_number() is not None or
-                mail_data.get_internships_salaries() is not None):
+            if mail_data.get_answers_given():
                 response_mails += 1
                 response_summary += (f"    Tytuł: {mail_data.get_mail_title()}\n"
                                      f"    Data: {mail_data.get_mail_date()}\n\n")
@@ -165,6 +211,13 @@ class MailService:
 
             print(f"E-mail potwierdzający do adresatów {config.confirmation_addressees} wysłano pomyślnie.")
 
+        except Exception as e:
+            print(f"Nie udało się wysłać e-mail'a potwierdzającego do adresatów {config.confirmation_addressees}: {e}")
+
+    def issue_stop_flag(self, outlook: CDispatch) -> None:
+
+        try:
+
             mail = outlook.CreateItem(0)
 
             mail.To = config.sender_email
@@ -178,7 +231,7 @@ class MailService:
             print("E-mail z flagą STOP wysłano pomyślnie.")
 
         except Exception as e:
-            print(f"Nie udało się wysłać e-mail'a potwierdzającego do adresatów {config.confirmation_addressees}: {e}")
+            print(f"Nie udało się wysłać e-mail'a z flagą STOP do {config.sender_email}: {e}")
 
     def _is_mail(self, item: CDispatch) -> bool:
         return item.Class == 43
@@ -190,8 +243,8 @@ class MailService:
         try:
 
             namespace = outlook.GetNamespace("MAPI")
-            folder = namespace.GetDefaultFolder(6)
-            items = list(folder.Items)
+            inbox_folder = namespace.GetDefaultFolder(6)
+            items = list(inbox_folder.Items)
             items.reverse()
 
             for mail_id, item in enumerate(items):
@@ -205,6 +258,7 @@ class MailService:
 
                     mail_data = ResponseMailModel()
 
+                    mail_data.set_mail_id(item.EntryID)
                     mail_data.set_mail_title(mail_title)
                     mail_data.set_mail_content(item.Body)
                     mail_data.set_mail_sender(item.SenderEmailAddress)

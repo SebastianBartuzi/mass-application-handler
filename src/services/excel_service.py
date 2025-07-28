@@ -110,7 +110,7 @@ class ExcelService:
                 )
                 self._file_handler.set_excel_cell(
                     sheet,
-                    f'{config.report_excel_plans_paid_internships}{row}',
+                    f'{config.report_excel_plans_paid_internships_column}{row}',
                     mail_data.get_plans_paid_internships()
                 )
                 self._file_handler.set_excel_cell(
@@ -131,5 +131,8 @@ class ExcelService:
 
                 print(f"Pomyślnie wypełniono rząd tabeli dla TERYT: {teryt}.")
 
-        workbook.save(self._path_creator.get_report_excel_file_path())
+        self._file_handler.save_workbook(
+            workbook, self._path_creator.get_report_excel_file_path(), config.report_excel_tab_name,
+            config.report_excel_start_cell, config.report_excel_end_cell
+        )
         print("Pomyślnie wypełniono raport!")

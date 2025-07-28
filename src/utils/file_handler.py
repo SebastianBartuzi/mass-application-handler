@@ -7,6 +7,7 @@ from docx import Document
 from docx.text.paragraph import Paragraph
 from docx2pdf import convert as convert_docx_to_pdf
 from openpyxl.workbook import Workbook
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from openpyxl.worksheet.worksheet import Worksheet
 from win32com.client import CDispatch
@@ -21,13 +22,13 @@ class FileHandler:
             if cell_value is not None:
 
                 if cell_value is True:
-                    sheet[cell_id] = 1
+                    sheet[cell_id].value = 1
 
                 elif cell_value is False:
-                    sheet[cell_id] = 0
+                    sheet[cell_id].value = 0
 
                 else:
-                    sheet[cell_id] = cell_value
+                    sheet[cell_id].value = cell_value
 
         except Exception as e:
             raise Exception(f"Błąd podczas wypełniana komórki Excel {cell_id} z wartością {cell_value}: {e}")
@@ -74,6 +75,26 @@ class FileHandler:
 
         except Exception as e:
             raise Exception(f"Błąd podczas pobierania danych z Excel'a {file_path}: {e}")
+
+    def save_workbook(self, workbook: Workbook, file_path: str, tab_name: str, start_cell: str, end_cell: str) -> None:
+
+        try:
+            sheet_to_table = workbook[tab_name]
+
+            table_range = f"{start_cell}:{end_cell}"
+
+            tab = Table(displayName="", ref=table_range)
+            style = TableStyleInfo(
+                showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=False
+            )
+            tab.tableStyleInfo = style
+
+            sheet_to_table.add_table(tab)
+            print(f"Utworzono tabelę w arkuszu '{tab_name}' w zakresie '{table_range}'.")
+            workbook.save(file_path)
+
+        except Exception as e:
+            raise Exception(f"Błąd podczas zapisywania danych do pliku Excel {file_path}: {e}")
 
     def save_docx(self, docx_data: Document, file_path: str) -> None:
 

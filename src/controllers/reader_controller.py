@@ -33,7 +33,10 @@ class ReaderController:
         #         self._response_service.set_matched_teryt(response_data, mail_data)
         #
         # self._excel_service.fill_report_excel(mails_data)
+        #
+        # self._mail_service.forward_attention_needed_mails(outlook, mails_data)
         # self._mail_service.issue_read_confirmation(outlook, mails_data)
+        # self._mail_service.issue_stop_flag(outlook)
 
         responses = [
             {
@@ -148,4 +151,7 @@ class ReaderController:
                 self._response_service.set_matched_teryt(response_data, mail_data)
 
         self._excel_service.fill_report_excel(mails_data[:len(responses)])
+
+        self._mail_service.forward_attention_needed_mails(outlook, mails_data[:len(responses)])
         self._mail_service.issue_read_confirmation(outlook, mails_data[:len(responses)])
+        self._mail_service.issue_stop_flag(outlook)

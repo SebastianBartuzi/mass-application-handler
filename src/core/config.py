@@ -32,10 +32,12 @@ class BaseConfig:
     report_excel_additional_context_column = os.getenv('REPORT_EXCEL_ADDITIONAL_CONTEXT_COLUMN')
     report_excel_offers_internships_column = os.getenv('REPORT_EXCEL_OFFERS_INTERNSHIPS_COLUMN')
     report_excel_are_internships_paid_column = os.getenv('REPORT_EXCEL_ARE_INTERNSHIPS_PAID_COLUMN')
-    report_excel_plans_paid_internships = os.getenv('REPORT_EXCEL_PLANS_PAID_INTERNSHIPS')
+    report_excel_plans_paid_internships_column = os.getenv('REPORT_EXCEL_PLANS_PAID_INTERNSHIPS_COLUMN')
     report_excel_paid_internships_number_column = os.getenv('REPORT_EXCEL_PAID_INTERNSHIPS_NUMBER_COLUMN')
     report_excel_internships_salaries_column = os.getenv('REPORT_EXCEL_INTERNSHIPS_SALARIES_COLUMN')
     report_excel_additional_info_column = os.getenv('REPORT_EXCEL_ADDITIONAL_INFO_COLUMN')
+    report_excel_start_cell = os.getenv('REPORT_EXCEL_START_CELL')
+    report_excel_end_cell = os.getenv('REPORT_EXCEL_END_CELL')
 
     data_excel_file_path = os.getenv('DATA_EXCEL_FILE_PATH')
     report_excel_file_path = os.getenv('REPORT_EXCEL_FILE_PATH')

@@ -74,14 +74,14 @@ class GeminiService:
 
     def analyse_mail(self, prompt: str, mail_data: ResponseMailModel) -> Dict[str, Any]:
 
-        print(prompt)
-        print(mail_data.get_attachments_paths())
-
         response = self._get_client().models.generate_content(
             model=config.response_model,
             contents=self._get_contents(prompt, mail_data.get_attachments_paths()),
             config=self._get_config(config.mail_analysis_response_schema_path),
         )
+
+        for attachment_path in mail_data.get_attachments_paths():
+            self._file_handler.remove_file(attachment_path)
 
         return self._type_converter.str_to_dict_or_list(response.text)
 

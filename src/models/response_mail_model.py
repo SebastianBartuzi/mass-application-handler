@@ -1,9 +1,12 @@
 from typing import List, Optional
 
+from src.enums.attention_information import AttentionInformation
 from src.utils import FileHandler
 
 
 class ResponseMailModel:
+    
+    _mail_id: Optional[str] = None
 
     _mail_sender: str = ""
     _mail_title: str = ""
@@ -38,6 +41,16 @@ class ResponseMailModel:
 
     def __init__(self):
         self.file_handler = FileHandler()
+        
+    def set_mail_id(self, mail_id: str):
+
+        if not isinstance(mail_id, str):
+            raise ValueError(f"Nieprawidłowa wartość mail_id: {mail_id}!")
+
+        self._mail_id = mail_id
+
+    def get_mail_id(self) -> str:
+        return self._mail_id
 
     def set_mail_title(self, mail_title: str) -> None:
 
@@ -52,7 +65,7 @@ class ResponseMailModel:
     def set_mail_content(self, mail_content: str) -> None:
 
         if not isinstance(mail_content, str):
-            raise ValueError(f"Nieprawidłowa wartość mail_content: {mail_content} dla wiadomości {self._mail_title}!")
+            raise ValueError(f"Nieprawidłowa wartość mail_content: {mail_content} dla wiadomości {self._mail_id}!")
 
         self._mail_content = mail_content
 
@@ -62,7 +75,7 @@ class ResponseMailModel:
     def set_mail_sender(self, mail_sender: str) -> None:
 
         if not isinstance(mail_sender, str) or not mail_sender:
-            raise ValueError(f"Nieprawidłowa wartość mail_sender: {mail_sender} dla wiadomości {self._mail_title}!")
+            raise ValueError(f"Nieprawidłowa wartość mail_sender: {mail_sender} dla wiadomości {self._mail_id}!")
 
         self._mail_sender = mail_sender
 
@@ -72,7 +85,7 @@ class ResponseMailModel:
     def set_mail_date(self, mail_date: str) -> None:
 
         if not isinstance(mail_date, str) or not mail_date:
-            raise ValueError(f"Nieprawidłowa wartość mail_date: {mail_date} dla wiadomości {self._mail_title}!")
+            raise ValueError(f"Nieprawidłowa wartość mail_date: {mail_date} dla wiadomości {self._mail_id}!")
 
         self._mail_date = mail_date
 
@@ -82,11 +95,11 @@ class ResponseMailModel:
     def set_attachments_paths(self, attachments_paths: List[str]) -> None:
 
         if not isinstance(attachments_paths, List):
-            raise ValueError(f"Wartość attachments_paths dla wiadomości {self._mail_title} musi być listą!")
+            raise ValueError(f"Wartość attachments_paths dla wiadomości {self._mail_id} musi być listą!")
 
         for attachment_path in attachments_paths:
             if not isinstance(attachment_path, str) or not self.file_handler.check_file_exists(attachment_path):
-                raise ValueError(f"Dla wiadomości {self._mail_title} nieprawidłowa ścieżka załącznika lub plik nie "
+                raise ValueError(f"Dla wiadomości {self._mail_id} nieprawidłowa ścieżka załącznika lub plik nie "
                                  f"istnieje: {attachment_path}!")
 
         self._attachments_paths = attachments_paths
@@ -97,12 +110,11 @@ class ResponseMailModel:
     def set_unacceptable_attachments_names(self, unacceptable_attachments_names: List[str]) -> None:
 
         if not isinstance(unacceptable_attachments_names, List):
-            raise ValueError(f"Wartość unacceptable_attachments_names dla wiadomości {self._mail_title} musi być "
-                             f"listą!")
+            raise ValueError(f"Wartość unacceptable_attachments_names dla wiadomości {self._mail_id} musi być listą!")
 
         for unacceptable_attachment_name in unacceptable_attachments_names:
             if not isinstance(unacceptable_attachment_name, str):
-                raise ValueError(f"Dla wiadomości {self._mail_title} nieprawidłowa ścieżka załącznika lub plik nie "
+                raise ValueError(f"Dla wiadomości {self._mail_id} nieprawidłowa ścieżka załącznika lub plik nie "
                                  f"istnieje: {unacceptable_attachment_name}!")
 
         self._unacceptable_attachments_names = unacceptable_attachments_names
@@ -113,7 +125,7 @@ class ResponseMailModel:
     def set_teryt(self, teryt: str) -> None:
 
         if not isinstance(teryt, str):
-            raise ValueError(f"Nieprawidłowa wartość teryt: {teryt} dla wiadomości {self._mail_title}!")
+            raise ValueError(f"Nieprawidłowa wartość teryt: {teryt} dla wiadomości {self._mail_id}!")
 
         self._teryt = teryt
 
@@ -124,7 +136,7 @@ class ResponseMailModel:
 
         if not isinstance(no_teryt_matched, bool):
             raise ValueError(f"Nieprawidłowa wartość no_teryt_matched: {no_teryt_matched} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._no_teryt_matched = no_teryt_matched
 
@@ -135,7 +147,7 @@ class ResponseMailModel:
 
         if not isinstance(multiple_teryts_matched, bool):
             raise ValueError(f"Nieprawidłowa wartość multiple_teryts_matched: {multiple_teryts_matched} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._multiple_teryts_matched = multiple_teryts_matched
 
@@ -146,7 +158,7 @@ class ResponseMailModel:
 
         if not isinstance(automatic_response, bool) and automatic_response is not None:
             raise ValueError(f"Nieprawidłowa wartość automatic_response: {automatic_response} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._automatic_response = automatic_response
 
@@ -157,7 +169,7 @@ class ResponseMailModel:
 
         if not isinstance(mail_not_delivered, bool) and mail_not_delivered is not None:
             raise ValueError(f"Nieprawidłowa wartość mail_not_delivered: {mail_not_delivered} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._mail_not_delivered = mail_not_delivered
 
@@ -168,7 +180,7 @@ class ResponseMailModel:
 
         if not isinstance(wrong_addressee, bool) and wrong_addressee is not None:
             raise ValueError(f"Nieprawidłowa wartość wrong_addressee: {wrong_addressee} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._wrong_addressee = wrong_addressee
 
@@ -179,7 +191,7 @@ class ResponseMailModel:
 
         if not isinstance(action_required, bool) and action_required is not None:
             raise ValueError(f"Nieprawidłowa wartość action_required: {action_required} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._action_required = action_required
 
@@ -190,7 +202,7 @@ class ResponseMailModel:
 
         if not isinstance(deadline_extended, str) and deadline_extended is not None:
             raise ValueError(f"Nieprawidłowa wartość deadline_extended: {deadline_extended} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._deadline_extended = deadline_extended
 
@@ -201,7 +213,7 @@ class ResponseMailModel:
 
         if not isinstance(refused_to_answer_fully, bool) and refused_to_answer_fully is not None:
             raise ValueError(f"Nieprawidłowa wartość refused_to_answer_fully: {refused_to_answer_fully} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._refused_to_answer_fully = refused_to_answer_fully
 
@@ -212,7 +224,7 @@ class ResponseMailModel:
 
         if not isinstance(refused_to_answer_partially, bool) and refused_to_answer_partially is not None:
             raise ValueError(f"Nieprawidłowa wartość refused_to_answer_partially: {refused_to_answer_partially} dla "
-                             f"wiadomości {self._mail_title}!")
+                             f"wiadomości {self._mail_id}!")
 
         self._refused_to_answer_partially = refused_to_answer_partially
 
@@ -223,7 +235,7 @@ class ResponseMailModel:
 
         if not isinstance(part_answered_separately, bool) and part_answered_separately is not None:
             raise ValueError(f"Nieprawidłowa wartość part_answered_separately: {part_answered_separately} dla "
-                             f"wiadomości {self._mail_title}!")
+                             f"wiadomości {self._mail_id}!")
 
         self._part_answered_separately = part_answered_separately
 
@@ -234,7 +246,7 @@ class ResponseMailModel:
 
         if not isinstance(additional_info_response_type, str) and additional_info_response_type is not None:
             raise ValueError(f"Nieprawidłowa wartość additional_info_response_type: {additional_info_response_type} "
-                             f"dla wiadomości {self._mail_title}!")
+                             f"dla wiadomości {self._mail_id}!")
 
         self._additional_info_response_type = additional_info_response_type
 
@@ -245,7 +257,7 @@ class ResponseMailModel:
 
         if not isinstance(offers_internships, bool) and offers_internships is not None:
             raise ValueError(f"Nieprawidłowa wartość offers_internships: {offers_internships} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._offers_internships = offers_internships
 
@@ -256,7 +268,7 @@ class ResponseMailModel:
 
         if not isinstance(are_internships_paid, bool) and are_internships_paid is not None:
             raise ValueError(f"Nieprawidłowa wartość are_internships_paid: {are_internships_paid} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._are_internships_paid = are_internships_paid
 
@@ -267,7 +279,7 @@ class ResponseMailModel:
 
         if not isinstance(plans_paid_internships, bool) and plans_paid_internships is not None:
             raise ValueError(f"Nieprawidłowa wartość plans_paid_internships: {plans_paid_internships} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._plans_paid_internships = plans_paid_internships
 
@@ -278,7 +290,7 @@ class ResponseMailModel:
 
         if not isinstance(paid_internships_number, float) and paid_internships_number is not None:
             raise ValueError(f"Nieprawidłowa wartość paid_internships_number: {paid_internships_number} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._paid_internships_number = paid_internships_number
 
@@ -289,7 +301,7 @@ class ResponseMailModel:
 
         if not isinstance(internships_salaries, float) and internships_salaries is not None:
             raise ValueError(f"Nieprawidłowa wartość internships_salaries: {internships_salaries} dla wiadomości "
-                             f"{self._mail_title}!")
+                             f"{self._mail_id}!")
 
         self._internships_salaries = internships_salaries
 
@@ -300,20 +312,34 @@ class ResponseMailModel:
 
         if not isinstance(additional_info_questions_responses, str) and additional_info_questions_responses is not None:
             raise ValueError(f"Nieprawidłowa wartość additional_info_questions_responses: "
-                             f"{additional_info_questions_responses} dla wiadomości {self._mail_title}!")
+                             f"{additional_info_questions_responses} dla wiadomości {self._mail_id}!")
 
         self._additional_info_questions_responses = additional_info_questions_responses
 
     def get_additional_info_questions_responses(self) -> Optional[str]:
         return self._additional_info_questions_responses
 
-    def set_attention_information(self, attention_information: Optional[str]) -> None:
-
-        if not isinstance(attention_information, str) and attention_information is not None:
-            raise ValueError(f"Nieprawidłowa wartość attention_information: "
-                             f"{attention_information} dla wiadomości {self._mail_title}!")
-
-        self._attention_information = attention_information
-
     def get_attention_information(self) -> Optional[str]:
-        return self._attention_information
+        return (
+            AttentionInformation.NO_TERYT_MATCHED.value if self._no_teryt_matched else
+            AttentionInformation.MULTIPLE_TERYTS_MATCHED.value if self._multiple_teryts_matched else
+            AttentionInformation.MAIL_NOT_DELIVERED.value if self._mail_not_delivered else
+            AttentionInformation.WRONG_ADDRESSEE.value if self._wrong_addressee else
+            AttentionInformation.ACTION_REQUIRED.value if self._action_required else
+            AttentionInformation.DEADLINE_EXTENDED.value if self._deadline_extended else
+            AttentionInformation.REFUSED_TO_ANSWER_FULLY.value if self._refused_to_answer_fully else
+            AttentionInformation.REFUSED_TO_ANSWER_PARTIALLY.value if self._refused_to_answer_partially else
+            AttentionInformation.PART_ANSWERED_SEPARATELY.value if self._part_answered_separately else
+            ""
+        )
+
+    def get_attention_needed(self) -> bool:
+        return any([self._mail_not_delivered, self._wrong_addressee, self._action_required, self._deadline_extended,
+                    self._refused_to_answer_fully, self._refused_to_answer_partially, self._part_answered_separately,
+                    self._no_teryt_matched, self._multiple_teryts_matched])
+
+    def get_answers_given(self) -> bool:
+        return any(flag is not None for flag in [
+            self._offers_internships, self._are_internships_paid, self._plans_paid_internships,
+            self._paid_internships_number, self._internships_salaries
+        ])
