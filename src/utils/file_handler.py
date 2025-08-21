@@ -1,5 +1,7 @@
 import json
 import os
+from pathlib import Path
+
 import openpyxl
 import win32com.client as win32
 from typing import Dict, Optional, Any, Tuple
@@ -180,20 +182,62 @@ class FileHandler:
         except Exception as e:
             raise Exception(f"Błąd podczas zachowywania formatowania .docx: {e}")
 
+    def convert_docx_to_txt(self, file_path: str) -> str:
+        docx_path = Path(file_path)
+
+        if not docx_path.exists():
+            print(f"Error: The file '{file_path}' does not exist.")
+            return file_path
+
+        if docx_path.suffix.lower() != '.docx':
+            return file_path
+
+        print(f"Attempting to convert '{docx_path.name}' to text...")
+
+        try:
+            # 3. Open the .docx document
+            document = Document(docx_path)
+
+            # 4. Extract text content, paragraph by paragraph
+            text_content = []
+            for paragraph in document.paragraphs:
+                # Append the text of the current paragraph, followed by a newline
+                text_content.append(paragraph.text)
+
+            # 5. Create the output file path with a .txt extension
+            # `with_suffix` is a convenient pathlib method for changing the file extension
+            txt_path = docx_path.with_suffix('.txt')
+
+            # 6. Write the extracted text to the new .txt file
+            with open(txt_path, 'w', encoding='utf-8') as txt_file:
+                # Join all the paragraph texts with a newline
+                txt_file.write('\n'.join(text_content))
+
+            print(f"Successfully converted and saved text to '{txt_path}'.")
+
+            self.remove_file(file_path)
+            return str(txt_path)
+
+        except Exception as e:
+            print(f"An error occurred during conversion: {e}")
+            return file_path
+
     def is_gemini_accepted_file(self, file_path: str) -> bool:
 
         try:
             accepted_extensions = {
-                '.pdf', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.tsv',
+                '.pdf', '.txt', '.xls', '.xlsx', '.csv', '.tsv',
                 '.rtf', '.dot', '.dotx', '.hwp', '.hwpx', '.png', '.jpeg', '.jpg',
                 '.webp', '.mp4', '.mov', '.webm', '.flv', '.mpeg', '.mpg', '.3gpp',
                 '.mp3', '.wav', '.flac', '.aac', '.mpa', '.mpga', '.opus', '.pcm'
             }
 
+            extensions_to_process = {'.docx'}
+
             _, file_extension = os.path.splitext(file_path)
             file_extension = file_extension.lower()
 
-            if file_extension in accepted_extensions:
+            if file_extension in accepted_extensions or file_extension in extensions_to_process:
                 return True
             else:
                 print(f"UWAGA! Nieakceptowalne rozszerzenie pliku: {file_extension} dla {file_path}. Plik nie zostanie "

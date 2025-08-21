@@ -8,5 +8,7 @@ class AttentionInformation(Enum):
     REFUSED_TO_ANSWER_FULLY: str = "Gmina odmówiła odpowiedzi na wszystkie pytania."
     REFUSED_TO_ANSWER_PARTIALLY: str = "Gmina odmówiła odpowiedzi na część pytań."
     PART_ANSWERED_SEPARATELY: str = "Gmina wyśle część odpowiedzi w osobnej korespondencji."
+    NO_INFORMATION: str = "Brak informacji w wiadomości e-mail lub niewspierany przez Gemini załącznik."
     NO_TERYT_MATCHED: str = "Nie dopasowano kodu TERYT do wiadomości."
     MULTIPLE_TERYTS_MATCHED: str = "Dopasowano kilka kodów TERYT do wiadomości."
+    OTHER_ERROR: str = "Wystąpił inny błąd."

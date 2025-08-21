@@ -1,5 +1,5 @@
 {
-    "type": "LIST",
+    "type": "ARRAY",
     "items": {
         "type": "STRING"
     }

@@ -247,7 +247,7 @@ class MailService:
             items = list(inbox_folder.Items)
             items.reverse()
 
-            for mail_id, item in enumerate(items):
+            for mail_ind, item in enumerate(items[6:105]):
 
                 if self._is_mail(item):
 
@@ -278,15 +278,16 @@ class MailService:
 
                             if self._file_handler.is_gemini_accepted_file(attachment_file_name):
 
-                                print(attachment.FileName)
-
                                 attachment_path = self._path_creator.get_attachment_path(
-                                    mail_id, attachment_id, self._file_handler.get_file_extension(attachment_file_name)
+                                    mail_ind, attachment_id, self._file_handler.get_file_extension(attachment_file_name)
                                 )
 
                                 attachment.SaveAsFile(attachment_path)
+
+                                attachment_path = self._file_handler.convert_docx_to_txt(attachment_path)
                                 attachments_paths.append(attachment_path)
-                                print(f"    Zapisano załącznik: {attachment_file_name}")
+
+                                print(f"    Zapisano załącznik {attachment_file_name} jako {attachment_path}.")
 
                             else:
 
@@ -295,7 +296,7 @@ class MailService:
                     mail_data.set_attachments_paths(attachments_paths)
                     mail_data.set_unacceptable_attachments_names(unacceptable_attachments_names)
 
-                    print("Pomyślnie przeczytano e-mail!")
+                    print(f"Pomyślnie przeczytano e-mail nr {mail_ind}!")
 
                     emails_data.append(mail_data)
 

@@ -11,11 +11,11 @@ In case you don't find it, return this field as an empty string.
 
 "response_type":
 The e-mail may not be an e-mail with answers to the public information request. In such a case, return:
-    "automatic_response": return True if an e-mail is an automatic response from the office saying that the request has been delivered and accepted or about personal data processing; don't return otherwise
+    "automatic_response": return True if an e-mail is an automatic response from the office saying that the request has been delivered and accepted or about personal data processing; return True if it is an e-mail from Młoda Lewica; don't return otherwise
     "mail_not_delivered": return True if an e-mail is an automatic response from the mail provider saying that the e-mail was not delivered; don't return otherwise
     "wrong_addressee": return True if an e-mail was sent with wrong addressee data (e.g. wrong mayor data, wrong local authority, etc.); don't return otherwise
     "action_required": return True if an action is required (e.g. mail says that this question should be directed to a different department); don't return otherwise
-    "deadline_extended": return the extension date if the office informed about an extension for the answer to the request; don't return otherwise
+    "deadline_extended": return the extension date if the office informed about an extension for the answer to the request and didn't send an answer (if they sent an answer, don't return this field); don't return otherwise
     "refused_to_answer_fully": return True if the local authority refused to answer the whole request and gave reasons for that; don't return otherwise
     "refused_to_answer_partially": return True if the local authority refused to answer one or a few questions of the request and gave reasons for that; don't return otherwise
     "part_answered_separately": return True if the local authority plans to answer some questions in a separate e-mail; don't return otherwise
@@ -35,7 +35,7 @@ Following fields should give answers to these questions.
     "plans_paid_internships": return True if the authority plans to introduce paid internships; return False otherwise; don't return at all if answer not given
     "paid_internships_number": return the number of paid internships that the authority offers; don't return at all if answer not given
     "internships_salaries": return salaries of these internships; return 0 if they are not paid or answer not given or if 'Nie dotyczy'; don't return at all if answer not given
-    "additional_info": return any additional information on internships that is not covered by fields given; always return it in Polish; don't return at all if nothing to add
+    "additional_info": return any additional information on internships that is not covered by fields given but is worth paying attention to; always return it in Polish; don't return at all if nothing to add.
 
 
 

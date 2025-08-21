@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from src.enums.attention_information import AttentionInformation
 from src.utils import FileHandler
@@ -27,13 +27,15 @@ class ResponseMailModel:
     _refused_to_answer_fully: Optional[bool] = None
     _refused_to_answer_partially: Optional[bool] = None
     _part_answered_separately: Optional[bool] = None
+    _no_information: Optional[bool] = None
+    _other_error: Optional[bool] = None
     _additional_info_response_type: Optional[str] = None
 
     _offers_internships: Optional[bool] = None
     _are_internships_paid: Optional[bool] = None
     _plans_paid_internships: Optional[bool] = None
-    _paid_internships_number: Optional[float] = None
-    _internships_salaries: Optional[float] = None
+    _paid_internships_number: Union[int, float, None] = None
+    _internships_salaries: Union[int, float, None] = None
     _additional_info_questions_responses: Optional[str] = None
 
     _attention_information: Optional[str] = None
@@ -242,6 +244,26 @@ class ResponseMailModel:
     def get_part_answered_separately(self) -> Optional[bool]:
         return self._part_answered_separately
 
+    def set_no_information(self, no_information: Optional[bool]) -> None:
+
+        if not isinstance(no_information, bool) and no_information is not None:
+            raise ValueError(f"Nieprawidłowa wartość no_information: {no_information} dla wiadomości {self._mail_id}!")
+
+        self._no_information = no_information
+
+    def get_no_information(self) -> Optional[bool]:
+        return self._no_information
+
+    def set_other_error(self, other_error: Optional[bool]) -> None:
+
+        if not isinstance(other_error, bool) and other_error is not None:
+            raise ValueError(f"Nieprawidłowa wartość other_error: {other_error} dla wiadomości {self._mail_id}!")
+
+        self._other_error = other_error
+
+    def get_other_error(self) -> Optional[bool]:
+        return self._other_error
+
     def set_additional_info_response_type(self, additional_info_response_type: Optional[str]) -> None:
 
         if not isinstance(additional_info_response_type, str) and additional_info_response_type is not None:
@@ -286,26 +308,26 @@ class ResponseMailModel:
     def get_plans_paid_internships(self) -> Optional[bool]:
         return self._plans_paid_internships
 
-    def set_paid_internships_number(self, paid_internships_number: Optional[float]) -> None:
+    def set_paid_internships_number(self, paid_internships_number: Union[int, float, None]) -> None:
 
-        if not isinstance(paid_internships_number, float) and paid_internships_number is not None:
+        if not isinstance(paid_internships_number, (int, float)) and paid_internships_number is not None:
             raise ValueError(f"Nieprawidłowa wartość paid_internships_number: {paid_internships_number} dla wiadomości "
                              f"{self._mail_id}!")
 
         self._paid_internships_number = paid_internships_number
 
-    def get_paid_internships_number(self) -> Optional[float]:
+    def get_paid_internships_number(self) -> Union[int, float, None]:
         return self._paid_internships_number
 
-    def set_internships_salaries(self, internships_salaries: Optional[float]) -> None:
+    def set_internships_salaries(self, internships_salaries: Union[int, float, None]) -> None:
 
-        if not isinstance(internships_salaries, float) and internships_salaries is not None:
+        if not isinstance(internships_salaries, (int, float)) and internships_salaries is not None:
             raise ValueError(f"Nieprawidłowa wartość internships_salaries: {internships_salaries} dla wiadomości "
                              f"{self._mail_id}!")
 
         self._internships_salaries = internships_salaries
 
-    def get_internships_salaries(self) -> Optional[float]:
+    def get_internships_salaries(self) -> Union[int, float, None]:
         return self._internships_salaries
 
     def set_additional_info_questions_responses(self, additional_info_questions_responses: Optional[str]) -> None:
@@ -330,13 +352,15 @@ class ResponseMailModel:
             AttentionInformation.REFUSED_TO_ANSWER_FULLY.value if self._refused_to_answer_fully else
             AttentionInformation.REFUSED_TO_ANSWER_PARTIALLY.value if self._refused_to_answer_partially else
             AttentionInformation.PART_ANSWERED_SEPARATELY.value if self._part_answered_separately else
+            AttentionInformation.NO_INFORMATION.value if self._no_information else
+            AttentionInformation.OTHER_ERROR.value if self._other_error else
             ""
         )
 
     def get_attention_needed(self) -> bool:
         return any([self._mail_not_delivered, self._wrong_addressee, self._action_required, self._deadline_extended,
                     self._refused_to_answer_fully, self._refused_to_answer_partially, self._part_answered_separately,
-                    self._no_teryt_matched, self._multiple_teryts_matched])
+                    self._no_information, self._no_teryt_matched, self._multiple_teryts_matched])
 
     def get_answers_given(self) -> bool:
         return any(flag is not None for flag in [

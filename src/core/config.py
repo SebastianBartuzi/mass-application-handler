@@ -6,8 +6,7 @@ class BaseConfig:
 
     load_dotenv()
 
-    project_id = os.getenv('PROJECT_ID')
-    location_code = os.getenv('LOCATION_CODE')
+    gemini_api_key = os.getenv('GEMINI_API_KEY')
     response_model = os.getenv('RESPONSE_MODEL')
     thinking_budget = int(os.getenv('THINKING_BUDGET'))
 
@@ -44,8 +43,8 @@ class BaseConfig:
     report_template_excel_file_path = os.getenv('REPORT_TEMPLATE_EXCEL_FILE_PATH')
     application_template_path = os.getenv('APPLICATION_TEMPLATE_PATH')
     mail_analysis_prompt_path = os.getenv('MAIL_ANALYSIS_PROMPT_PATH')
-    mail_analysis_response_schema_path = os.getenv('MAIL_ANALYSIS_PROMPT_PATH')
-    teryt_matcher_prompt_path = os.getenv('TERYT_MATCHER_RESPONSE_SCHEMA_PATH')
+    mail_analysis_response_schema_path = os.getenv('MAIL_ANALYSIS_RESPONSE_SCHEMA_PATH')
+    teryt_matcher_prompt_path = os.getenv('TERYT_MATCHER_PROMPT_PATH')
     teryt_matcher_response_schema_path = os.getenv('TERYT_MATCHER_RESPONSE_SCHEMA_PATH')
 
     temp_path = os.getenv('TMP_PATH')
