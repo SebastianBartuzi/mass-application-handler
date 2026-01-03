@@ -17,7 +17,7 @@ The e-mail may not be an e-mail with answers to the public information request. 
     "action_required": return True if an action is required (e.g. mail says that this question should be directed to a different department); don't return otherwise
     "deadline_extended": return the extension date if the office informed about an extension for the answer to the request and didn't send an answer (if they sent an answer, don't return this field); don't return otherwise
     "refused_to_answer_fully": return True if the local authority refused to answer the whole request and gave reasons for that; don't return otherwise
-    "refused_to_answer_partially": return True if the local authority refused to answer one or a few questions of the request and gave reasons for that; don't return otherwise
+    "refused_to_answer_partially": return True if the local authority refused to answer one or a few questions of the request and gave reasons for that; don't return otherwise or if a reason to refuse answer is that the question asks about the possible future state
     "part_answered_separately": return True if the local authority plans to answer some questions in a separate e-mail; don't return otherwise
     "additional_info": return all reasons for refusal/extensions/contextual information on unsuccessful mail delivery/actions that must be taken/any additional information useful to deal with the e-mail; always return it in Polish; don't return if nothing to return
 You should only return one key from the above and (optionally) "additional_info".

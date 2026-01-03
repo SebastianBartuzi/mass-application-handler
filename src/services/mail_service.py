@@ -247,7 +247,7 @@ class MailService:
             items = list(inbox_folder.Items)
             items.reverse()
 
-            for mail_ind, item in enumerate(items[6:105]):
+            for mail_ind, item in enumerate(items):
 
                 if self._is_mail(item):
 

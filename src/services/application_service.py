@@ -12,6 +12,17 @@ class ApplicationService:
         self._file_handler = FileHandler()
         self._utils = Utils()
 
+    def _create_replacements(self, authority_data: AuthorityModel):
+        return {
+            ApplicationPlaceholderEnum.DATE.value: self._utils.get_today_date(),
+            ApplicationPlaceholderEnum.ADDRESSEE_NAME.value: authority_data.get_governor_name(),
+            ApplicationPlaceholderEnum.ADDRESSEE_TITLE.value: authority_data.get_governor_title(),
+            ApplicationPlaceholderEnum.AUTHORITY_OFFICE_NAME.value: authority_data.get_authority_office_name(),
+            ApplicationPlaceholderEnum.SALUTATION.value: self._utils.get_salutation_denominator(
+                authority_data.get_authority_teryt(), authority_data.get_governor_gender()
+            )
+        }
+
     def generate_application_pdf(self, authority_data: AuthorityModel) -> None:
 
         if not self._file_handler.check_file_exists(authority_data.get_application_pdf_path()):
@@ -20,15 +31,7 @@ class ApplicationService:
 
             application_doc = Document(self._path_creator.get_application_template_path())
 
-            replacements = {
-                ApplicationPlaceholderEnum.DATE.value: self._utils.get_today_date(),
-                ApplicationPlaceholderEnum.ADDRESSEE_NAME.value: authority_data.get_governor_name(),
-                ApplicationPlaceholderEnum.ADDRESSEE_TITLE.value: authority_data.get_governor_title(),
-                ApplicationPlaceholderEnum.AUTHORITY_OFFICE_NAME.value: authority_data.get_authority_office_name(),
-                ApplicationPlaceholderEnum.SALUTATION.value: self._utils.get_salutation_denominator(
-                    authority_data.get_authority_teryt(), authority_data.get_governor_gender()
-                )
-            }
+            replacements = self._create_replacements(authority_data)
 
             for paragraph in application_doc.paragraphs:
                 original_text = paragraph.text

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [
-    { name = "Sebastian Bartuzi", email = "sebastian.bartuzi@mlodalewica.pl" },
+    { name = "Sebastian Bartuzi", email = "sebastianbartuzi910@gmail.com" },
 ]
 
 dependencies = [
